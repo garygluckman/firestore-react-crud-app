@@ -5,17 +5,44 @@ import Header from './Header';
 import Table from './Table';
 import Add from './Add';
 import Edit from './Edit';
+import { QuerySnapshot, collection, doc, getDocs } from "firebase/firestore"; 
+import { db } from '../../config/firestore';
 
-import { employeesData } from '../../data';
+//import { employeesData } from '../../data';
+
+// import { collection, addDoc } from "firebase/firestore"; 
+
+// try {
+//   const docRef = await addDoc(collection(db, "employees"), {
+//     firstName: "Gary",
+//     lastName: "Gluckman",
+//     email: "garyg@ckphysics.com",
+//     date: "2023-12-28",
+//     salary:"300000"
+//   });
+//   console.log("Document written with ID: ", docRef.id);
+// } catch (e) {
+//   console.error("Error adding document: ", e);
+// }
+
 
 const Dashboard = ({ setIsAuthenticated }) => {
-  const [employees, setEmployees] = useState(employeesData);
+  const [employees, setEmployees] = useState();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+
+const getEmployees = async () => {
+  const querySnapshot = await getDocs(collection(db, "employees"));
+  const employees = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));           
+  setEmployees(employees);
+}
+
+
   useEffect(() => {
     // TODO: create getEmployees function and call it here
+    getEmployees()
   }, []);
 
   const handleEdit = id => {
